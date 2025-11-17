@@ -27,7 +27,7 @@ Le code affiche le WebGraph dans la console pour visualiser les pages récupér�
 
 Limitation
 
-Le WebGraph ne contient pour l’instant que les pages du sitemap. 
+À ce stade, le WebGraph contient seulement les pages du sitemap, sans les liens internes encore à traiter. 
 
 Les arêtes (liens internes) restent donc à compléter.
 
