@@ -1,4 +1,4 @@
-Description
+ Description
 
 Ce projet implémente un web crawler simple qui visite les pages d’un site web et construit un graphe des pages sous forme de WebGraph. Chaque page visitée est représentée par un GraphNode contenant son URL, sa profondeur depuis la page de départ et les liens sortants internes.
 
