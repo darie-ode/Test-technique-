@@ -1,39 +1,61 @@
 Description
 
-Le site a été vérifié pour s’assurer qu’il est accessible et que le crawl est autorisé via le fichier robots.txt. Le sitemap a ensuite été utilisé pour récupérer toutes les URLs du domaine, permettant d’obtenir une vue d’ensemble de la structure du site.
+Ce projet implémente un web crawler simple qui visite les pages d’un site web et construit un graphe des pages sous forme de WebGraph. Chaque page visitée est représentée par un GraphNode contenant son URL, sa profondeur depuis la page de départ et les liens sortants internes.
 
-Le projet consiste à représenter le site sous forme d’un WebGraph, où chaque page constitue un nœud. Les liens internes entre les pages pourront être ajoutés ultérieurement comme des arêtes dans le graphe.
+Structure des données
 
+GraphNode
 
-Fonctionnement du code
+interface GraphNode {
+  url: string;       // URL de la page
+  depth: number;     // Profondeur depuis la page de départ
+  links: string[];   // URLs des pages liées
+}
 
-Définition des types
+Chaque page du site est un nœud du graphe.
+depth permet de limiter le crawl et d’éviter les boucles.
+links contient tous les liens internes présents sur la page.
 
-WebNode : représente une page avec son URL et une liste de liens internes (out).
+WebGraph
 
-WebGraph : représente l’ensemble du site, avec une page de départ (root) et tous les nœuds (nodes).
+interface WebGraph {
+  nodes: Map<string, GraphNode>; // Toutes les pages uniques
+}
 
-Construction du WebGraph
+nodes est une Map où la clé = URL de la page et la valeur = le GraphNode.
+La Map permet de retourner rapidement chaque page et d’éviter les doublons.
 
-Chaque URL récupérée depuis le sitemap devient un nœud dans le graphe.
+Fonctionnement
 
-Pour l’instant, les liens internes (out) sont vides, car le crawl complet des pages n’a pas été effectué.
+1. Démarrage : le crawler commence par une URL de départ (startUrl).
+2. Récursion : pour chaque page visitée :
+   - Récupère les liens internes vers le même domaine.
+   - Crée un GraphNode avec URL, depth et links.
+   - Ajoute le nœud dans le WebGraph.
+   - Appelle récursivement la fonction sur chaque lien trouvé.
+3. Limitation de profondeur : la récursion s’arrête lorsque la profondeur dépasse maxDepth.
+4. Gestion des erreurs : si une page est inaccessible, elle est ignorée sans interrompre le crawl.
 
+Choix techniques
 
-Affichage
+- GraphNode : permet de stocker toutes les informations utiles pour chaque page.
+- Map dans WebGraph : pour accéder rapidement aux pages et éviter les doublons.
+- Récursion + depth : parcours complet des pages tout en limitant la profondeur.
+- Filtrage des liens : le crawler reste sur le même domaine, évitant de sortir du site.
+- Try/catch + maxDepth : robustesse face aux pages cassées et contrôle du crawl.
 
-Le code affiche le WebGraph dans la console pour visualiser les pages récupérées et la structure globale.
+Exemple de graphe généré
 
+Pour un site fictif :
 
-Limitation
+Page A → Page B, Page C
+Page C → Page D
 
-À ce stade, le WebGraph contient seulement les pages du sitemap, sans les liens internes encore à traiter. 
+Le WebGraph contiendra :
 
-Les arêtes (liens internes) restent donc à compléter.
-
-
-Conclusion
-
-Le WebGraph permet d’obtenir une vision globale du site même sans parcourir toutes les pages.
-
-La structure établie constitue une base pour compléter le graphe avec les liens internes et mieux visualiser la navigation du site.
+Map {
+  "A" => { url: "A", depth: 0, links: ["B","C"] },
+  "B" => { url: "B", depth: 1, links: [] },
+  "C" => { url: "C", depth: 1, links: ["D"] },
+  "D" => { url: "D", depth: 2, links: [] }
+}
